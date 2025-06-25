@@ -1,0 +1,5 @@
+2025-06-25 12:27:14 - api_calls - WARNING - ✗ 環境変数ファイルが見つかりません: /home/ksaegusa/AI-financial-backend/.env
+2025-06-25 12:27:14 - api_calls - ERROR - ✗ GEMINI_API_KEY が環境変数に見つかりません
+2025-06-25 12:27:46 - api_calls - WARNING - ✗ 環境変数ファイルが見つかりません: /home/ksaegusa/AI-financial-backend/.env
+2025-06-25 12:27:46 - api_calls - INFO - 🔄 デフォルトモデルを使用します: gemini-1.5-flash
+2025-06-25 12:27:46 - api_calls - INFO - ✓ Gemini クライアントが正常に初期化されました

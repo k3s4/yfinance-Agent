@@ -1,0 +1,44 @@
+2025-06-25 12:20:37 - api - INFO - AAPLの財務指標を取得しています...
+2025-06-25 12:20:37 - api - INFO - ✓ 最新の株価データを取得しました
+2025-06-25 12:20:38 - api - INFO - ✓ 財務諸表データを取得しました
+2025-06-25 12:20:38 - api - INFO - 指標を構築しています...
+2025-06-25 12:20:38 - api - INFO - ✓ 指標の構築に成功しました
+2025-06-25 12:20:38 - api - DEBUG - 
+エージェントに渡す指標データ：
+2025-06-25 12:20:38 - api - DEBUG - return_on_equity: 1.38015
+2025-06-25 12:20:38 - api - DEBUG - net_margin: 0.24301
+2025-06-25 12:20:38 - api - DEBUG - operating_margin: 0.31028998
+2025-06-25 12:20:38 - api - DEBUG - revenue_growth: 0.051
+2025-06-25 12:20:38 - api - DEBUG - earnings_growth: 0.078
+2025-06-25 12:20:38 - api - DEBUG - book_value_growth: 0.0
+2025-06-25 12:20:38 - api - DEBUG - current_ratio: 0.821
+2025-06-25 12:20:38 - api - DEBUG - debt_to_equity: 1.46994
+2025-06-25 12:20:38 - api - DEBUG - free_cash_flow_per_share: 6.511301790474561
+2025-06-25 12:20:38 - api - DEBUG - earnings_per_share: 6.43
+2025-06-25 12:20:38 - api - DEBUG - pe_ratio: 31.150856
+2025-06-25 12:20:38 - api - DEBUG - price_to_book: 44.79982
+2025-06-25 12:20:38 - api - DEBUG - price_to_sales: 7.472265
+2025-06-25 12:26:50 - api - INFO - S&P 500指数データを取得しています...
+2025-06-25 12:26:50 - api - INFO - ✓ S&P 500指数データを取得しました
+2025-06-25 12:27:04 - api - INFO - AAPLの財務指標を取得しています...
+2025-06-25 12:27:05 - api - INFO - ✓ 最新の株価データを取得しました
+2025-06-25 12:27:05 - api - INFO - ✓ 財務諸表データを取得しました
+2025-06-25 12:27:05 - api - INFO - 指標を構築しています...
+2025-06-25 12:27:05 - api - INFO - ✓ 指標の構築に成功しました
+2025-06-25 12:27:05 - api - DEBUG - 
+エージェントに渡す指標データ：
+2025-06-25 12:27:05 - api - DEBUG - return_on_equity: 1.38015
+2025-06-25 12:27:05 - api - DEBUG - net_margin: 0.24301
+2025-06-25 12:27:05 - api - DEBUG - operating_margin: 0.31028998
+2025-06-25 12:27:05 - api - DEBUG - revenue_growth: 0.051
+2025-06-25 12:27:05 - api - DEBUG - earnings_growth: 0.078
+2025-06-25 12:27:05 - api - DEBUG - book_value_growth: 0.0
+2025-06-25 12:27:05 - api - DEBUG - current_ratio: 0.821
+2025-06-25 12:27:05 - api - DEBUG - debt_to_equity: 1.46994
+2025-06-25 12:27:05 - api - DEBUG - free_cash_flow_per_share: 6.511301790474561
+2025-06-25 12:27:05 - api - DEBUG - earnings_per_share: 6.43
+2025-06-25 12:27:05 - api - DEBUG - pe_ratio: 31.150856
+2025-06-25 12:27:05 - api - DEBUG - price_to_book: 44.79982
+2025-06-25 12:27:05 - api - DEBUG - price_to_sales: 7.472265
+2025-06-25 12:27:05 - api - INFO - AAPLの市場データを取得しています...
+2025-06-25 12:27:06 - api - INFO - ✓ 市場データの取得に成功しました
