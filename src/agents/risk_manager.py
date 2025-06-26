@@ -19,7 +19,7 @@ def risk_management_agent(state: AgentState):
     ticker = data["ticker"]
     portfolio = data.get("portfolio", {})
 
-    @log_llm_interaction
+    @log_llm_interaction(state)
     def analyze_risk():
         # 他のエージェントからの分析結果を取得
         technical_data = data.get("technical_analysis", {})

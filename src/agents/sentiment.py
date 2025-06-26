@@ -46,15 +46,15 @@ def sentiment_agent(state: AgentState):
            - 信用売り残高: ¥{credit_balance_data.get('margin_sell_balance', 0):,.0f}
            - 信用センチメント: {credit_balance_data.get('credit_sentiment', 'neutral')}
            
-        4. TOPIX市場トレンド：
-           - 日次変化率: {topix_data.get('daily_change_pct', 0):.2%}
-           - マーケットトレンド: {topix_data.get('market_trend', 'neutral')}
+        4. S&P500市場トレンド：
+           - 日次変化率: {sp500_data.get('daily_change_pct', 0):.2%}
+           - マーケットトレンド: {sp500_data.get('market_trend', 'neutral')}
 
         これらの実際の市場データに基づいて、以下を分析してください：
         1. 空売り比率から読み取れる市場参加者の悲観度
         2. 投資部門別フローから見る資金の流れとセンチメント
         3. 信用取引残高から見るレバレッジと投機的動向
-        4. TOPIX との相関による全体市場との関係性
+        4. S&P500 との相関による全体市場との関係性
         5. 外国人投資家の動向とその影響
 
         以下の形式で回答してください：
@@ -86,7 +86,7 @@ def sentiment_agent(state: AgentState):
             ],
             "market_impact": "high",  # 実際の取引データに基づく
             "analysis_timestamp": data.get("end_date", ""),
-            "data_sources": ["空売り残高", "投資部門別", "信用取引", "TOPIX"],
+            "data_sources": ["空売り残高", "投資部門別", "信用取引", "S&P500"],
             "short_selling_ratio": short_selling_data.get("short_ratio", 0),
             "foreign_net_flow": investment_sector_data.get("foreign_net", 0),
             "credit_sentiment": credit_balance_data.get("credit_sentiment", "neutral")

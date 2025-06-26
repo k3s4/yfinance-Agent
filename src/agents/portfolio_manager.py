@@ -19,7 +19,7 @@ def portfolio_management_agent(state: AgentState):
     ticker = data["ticker"]
     portfolio = data.get("portfolio", {})
 
-    @log_llm_interaction
+    @log_llm_interaction(state)
     def make_investment_decision():
         # 全エージェントからの分析結果を統合
         technical_data = data.get("technical_analysis", {})
