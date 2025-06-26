@@ -11,7 +11,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime, UTC
 from concurrent.futures import ThreadPoolExecutor, Future
 
-from .models.api_models import RunInfo
+from backend.models.api_models import RunInfo
 
 logger = logging.getLogger("api_state")
 

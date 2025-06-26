@@ -3,3 +3,9 @@
 2025-06-25 12:27:46 - api_calls - WARNING - ✗ 環境変数ファイルが見つかりません: /home/ksaegusa/AI-financial-backend/.env
 2025-06-25 12:27:46 - api_calls - INFO - 🔄 デフォルトモデルを使用します: gemini-1.5-flash
 2025-06-25 12:27:46 - api_calls - INFO - ✓ Gemini クライアントが正常に初期化されました
+2025-06-26 17:16:59 - api_calls - INFO - ✓ 環境変数を読み込みました: /Users/keitosaegusa/yfinance/.env
+2025-06-26 17:16:59 - api_calls - INFO - ✓ Gemini クライアントが正常に初期化されました
+2025-06-26 17:36:45 - api_calls - INFO - ✓ 環境変数を読み込みました: /Users/keitosaegusa/yfinance/.env
+2025-06-26 17:36:45 - api_calls - INFO - ✓ Gemini クライアントが正常に初期化されました
+2025-06-26 17:39:28 - api_calls - INFO - ✓ 環境変数を読み込みました: /Users/keitosaegusa/yfinance/.env
+2025-06-26 17:39:28 - api_calls - INFO - ✓ Gemini クライアントが正常に初期化されました
