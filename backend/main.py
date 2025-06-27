@@ -4,7 +4,7 @@ from typing import Dict, List
 
 from .routers import logs, runs
 # 新しいルーターのインポート
-from .routers import agents, workflow, analysis, api_runs
+from .routers import agents, workflow, analysis, api_runs, chat
 
 # FastAPIアプリケーションのインスタンスを作成
 app = FastAPI(
@@ -35,6 +35,7 @@ app.include_router(agents.router)
 app.include_router(workflow.router)
 app.include_router(analysis.router)
 app.include_router(api_runs.router)
+app.include_router(chat.router)
 
 # ルートエンドポイント：APIナビゲーション情報を提供
 @app.get("/")
@@ -49,7 +50,8 @@ def read_root():
                     "Agent": "/api/agents/",
                     "分析": "/api/analysis/",
                     "実行": "/api/runs/",
-                    "ワークフロー": "/api/workflow/"
+                    "ワークフロー": "/api/workflow/",
+                    "チャット": "/api/chat/"
                 }
             },
             "旧API": {
@@ -72,7 +74,8 @@ def api_navigation():
             "/api/agents": "各Agentの状態・データを取得",
             "/api/analysis": "株式分析タスクの実行および結果取得",
             "/api/runs": "実行中または過去のランの情報（api_stateベース）",
-            "/api/workflow": "現在のワークフロー状態の取得"
+            "/api/workflow": "現在のワークフロー状態の取得",
+            "/api/chat": "リアルタイムチャット（マルチエージェント統合）"
         },
         "legacy_api": {
             "/logs": "過去のLLM対話ログの取得",

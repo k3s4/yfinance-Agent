@@ -6,7 +6,12 @@
       "Bash(pkill:*)",
       "Bash(rg:*)",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(mv:*)",
+      "Bash(python:*)",
+      "Bash(poetry install:*)",
+      "Bash(poetry lock:*)",
+      "Bash(GEMINI_API_KEY=dummy poetry run python -m backend.src.main --help)"
     ],
     "deny": []
   }
