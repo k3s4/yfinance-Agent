@@ -27,7 +27,7 @@ poetry run pytest               # Run tests (none currently exist)
 poetry run python src/main.py --ticker AAPL  # Starts FastAPI server on port 8000
 ```
 
-### Next.js Frontend (in AI-finance-agent/)
+### Next.js Frontend (in frontend/)
 ```bash
 # Development
 pnpm dev                    # Start development server with Turbo
@@ -73,7 +73,7 @@ portfolio_management_agent (Final Investment Decision)
 - **LLM Integration**: Google Gemini (primary) and OpenAI GPT support
 - **API Layer**: FastAPI backend with async task processing
 
-### Frontend Architecture (AI-finance-agent/)
+### Frontend Architecture (frontend/)
 - **Next.js 15**: App Router with experimental PPR
 - **Database**: PostgreSQL with Drizzle ORM (Chat history only)
 - **Backend Integration**: REST API calls to Python FastAPI
@@ -101,7 +101,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-1.5-flash  # Optional, defaults to gemini-1.5-flash
 ```
 
-### Frontend (AI-finance-agent/.env)
+### Frontend (frontend/.env)
 ```bash
 # Backend connection
 BACKEND_URL=http://localhost:8000  # For local development
@@ -164,7 +164,7 @@ workflow.add_edge("previous_agent", "your_agent")
 │   ├── tools/                 # Data retrieval utilities
 │   ├── utils/                 # Logging and system utilities
 │   └── main.py                # Entry point and FastAPI server
-├── AI-finance-agent/          # Next.js Frontend
+├── frontend/                  # Next.js Frontend
 │   ├── app/                   # Next.js App Router
 │   ├── components/            # React components
 │   ├── lib/                   # Database and AI configuration
@@ -179,7 +179,7 @@ workflow.add_edge("previous_agent", "your_agent")
 
 ### Development Setup
 1. **Start Backend**: `poetry run python src/main.py --ticker AAPL`
-2. **Start Frontend**: `cd AI-finance-agent && pnpm dev`
+2. **Start Frontend**: `cd frontend && pnpm dev`
 3. **Test Integration**: Visit `http://localhost:3000` and ask about stocks
 
 ### Key Integration Points to Test
