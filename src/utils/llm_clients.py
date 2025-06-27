@@ -86,6 +86,21 @@ class GeminiClient(LLMClient):
                     system_instruction = None
 
                     for message in messages:
+                        # メッセージの形式を検証
+                        if isinstance(message, str):
+                            logger.warning(f"メッセージが文字列形式です: {message[:100]}...")
+                            # 文字列の場合はユーザーメッセージとして処理
+                            prompt += f"User: {message}\n"
+                            continue
+                        
+                        if not isinstance(message, dict):
+                            logger.error(f"無効なメッセージ形式: {type(message)}")
+                            continue
+                        
+                        if "role" not in message or "content" not in message:
+                            logger.error(f"必要なキーが不足しているメッセージ: {message}")
+                            continue
+                        
                         role = message["role"]
                         content = message["content"]
                         if role == "system":
@@ -182,9 +197,21 @@ class OpenAICompatibleClient(LLMClient):
             logger.debug(f"リクエスト内容: {messages}")
             logger.debug(f"モデル: {self.model}, ストリーム: {stream}")
 
+            # メッセージ形式を検証・修正
+            validated_messages = []
+            for message in messages:
+                if isinstance(message, str):
+                    logger.warning(f"メッセージが文字列形式です: {message[:100]}...")
+                    validated_messages.append({"role": "user", "content": message})
+                elif isinstance(message, dict) and "role" in message and "content" in message:
+                    validated_messages.append(message)
+                else:
+                    logger.error(f"無効なメッセージ形式をスキップ: {message}")
+                    continue
+
             response = self.client.chat.completions.create(
                 model=self.model,
-                messages=messages,
+                messages=validated_messages,
                 stream=stream
             )
 

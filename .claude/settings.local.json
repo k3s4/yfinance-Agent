@@ -3,7 +3,10 @@
     "allow": [
       "Bash(poetry run python:*)",
       "Bash(poetry run:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

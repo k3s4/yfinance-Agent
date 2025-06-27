@@ -70,7 +70,8 @@ def risk_management_agent(state: AgentState):
         データドリブンなリスク管理戦略を提案し、適切なポジションサイズを推奨してください。
         """
         
-        return get_chat_completion(prompt, model="openai/gpt-4o")
+        messages = [{"role": "user", "content": prompt}]
+        return get_chat_completion(messages, model="openai/gpt-4o")
 
     try:
         risk_result = analyze_risk()
@@ -131,7 +132,8 @@ def risk_management_agent(state: AgentState):
             })
 
         # メッセージとデータを更新
-        updated_messages = messages + [HumanMessage(content=f"リスク管理分析完了: {risk_result}")]
+        risk_message = risk_result if risk_result is not None else "リスク管理分析を完了しましたが、LLMからの詳細な分析結果を取得できませんでした。"
+        updated_messages = messages + [HumanMessage(content=f"リスク管理分析完了: {risk_message}")]
         updated_data = data.copy()
         updated_data["risk_analysis"] = risk_data
 

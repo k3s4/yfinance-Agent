@@ -60,7 +60,8 @@ def portfolio_management_agent(state: AgentState):
         論理的で具体的な推奨を提供してください。
         """
         
-        return get_chat_completion(prompt, model="openai/gpt-4o")
+        messages = [{"role": "user", "content": prompt}]
+        return get_chat_completion(messages, model="openai/gpt-4o")
 
     try:
         decision_result = make_investment_decision()
@@ -89,7 +90,10 @@ def portfolio_management_agent(state: AgentState):
             })
 
         # LLMの回答から具体的な推奨値を抽出・更新
-        portfolio_recommendation = _parse_llm_decision(decision_result, portfolio_recommendation)
+        if decision_result is not None:
+            portfolio_recommendation = _parse_llm_decision(decision_result, portfolio_recommendation)
+        else:
+            logger.warning("LLMからの投資判断結果がNoneです。デフォルト推奨値を使用します。")
         
         # 構造化された最終メッセージを作成
         final_message_data = {
@@ -107,6 +111,7 @@ def portfolio_management_agent(state: AgentState):
         }
         
         # 表示用の最終メッセージ
+        decision_text = decision_result if decision_result is not None else "LLM分析を取得できませんでした。保守的な判断として上記の推奨値を使用してください。"
         final_display_message = f"""
         【最終投資判断】
         銘柄: {ticker}
@@ -114,7 +119,7 @@ def portfolio_management_agent(state: AgentState):
         信頼度: {portfolio_recommendation['confidence']:.1%}
         推奨ポジション: {portfolio_recommendation['position_size']:.1%}
         
-        {decision_result}
+        {decision_text}
         """
 
         # メッセージとデータを更新
@@ -167,6 +172,16 @@ def _parse_llm_decision(decision_text: str, base_recommendation: dict) -> dict:
     import re
     
     recommendation = base_recommendation.copy()
+    
+    # None チェックを追加
+    if decision_text is None:
+        logger.warning("LLM判断テキストがNoneです。ベース推奨値を返します。")
+        return recommendation
+    
+    # 文字列型チェックを追加
+    if not isinstance(decision_text, str):
+        logger.warning(f"LLM判断テキストが文字列ではありません: {type(decision_text)}。ベース推奨値を返します。")
+        return recommendation
     
     try:
         # BUY/SELL/HOLD の抽出

@@ -561,12 +561,15 @@ def get_price_history(symbol: str, start_date: str = None, end_date: str = None,
 
         logger.info(f"価格履歴データの取得に成功しました（{len(df)}件）")
 
-        # NaN値を確認し報告
+        # NaN値を確認し報告（momentum指標のNaN値は正常）
         nan_columns = df.isna().sum()
         if nan_columns.any():
-            logger.warning("\n警告: 以下の指標にはNaN値が含まれています:")
+            logger.info("\n情報: 以下の指標にNaN値が含まれています（momentum指標の初期期間は正常な動作）:")
             for col, nan_count in nan_columns[nan_columns > 0].items():
-                logger.warning(f"- {col}: {nan_count} 件")
+                if col.startswith('momentum_') or col in ['volume_ma20', 'historical_volatility', 'hurst_exponent']:
+                    logger.info(f"- {col}: {nan_count} 件 (計算期間不足による正常なNaN)")
+                else:
+                    logger.warning(f"- {col}: {nan_count} 件 (要確認)")
 
         return df
 

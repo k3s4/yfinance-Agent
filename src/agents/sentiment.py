@@ -65,7 +65,8 @@ def sentiment_agent(state: AgentState):
         - data_driven_insights: 実際のデータから得られた洞察
         """
         
-        return get_chat_completion(prompt, model="openai/gpt-4o")
+        messages = [{"role": "user", "content": prompt}]
+        return get_chat_completion(messages, model="openai/gpt-4o")
 
     try:
         sentiment_result = analyze_sentiment()
@@ -99,7 +100,8 @@ def sentiment_agent(state: AgentState):
             })
 
         # メッセージとデータを更新
-        updated_messages = messages + [HumanMessage(content=f"センチメント分析完了: {sentiment_result}")]
+        sentiment_message = sentiment_result if sentiment_result is not None else "センチメント分析を完了しましたが、LLMからの詳細な分析結果を取得できませんでした。"
+        updated_messages = messages + [HumanMessage(content=f"センチメント分析完了: {sentiment_message}")]
         updated_data = data.copy()
         updated_data["sentiment_analysis"] = sentiment_data
 

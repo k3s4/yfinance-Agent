@@ -2,6 +2,7 @@ from langchain_core.messages import HumanMessage
 from src.agents.state import AgentState, show_agent_reasoning, show_workflow_status
 from src.tools.openrouter_config import get_chat_completion
 from src.utils.api_utils import agent_endpoint, log_llm_interaction
+from src.utils.json_utils import safe_parse_json
 import json
 import ast
 import logging
@@ -39,16 +40,11 @@ def debate_room_agent(state: AgentState):
         if not hasattr(msg, 'content') or msg.content is None:
             logger.warning(f"研究員 {name} のメッセージ内容が空です")
             continue
-        try:
-            data = json.loads(msg.content)
-            logger.debug(f"{name} の JSON 内容を正常に解析")
-        except (json.JSONDecodeError, TypeError):
-            try:
-                data = ast.literal_eval(msg.content)
-                logger.debug(f"{name} の内容を ast.literal_eval で解析")
-            except (ValueError, SyntaxError, TypeError):
-                logger.warning(f"{name} のメッセージ内容を解析できず、スキップします")
-                continue
+        data = safe_parse_json(msg.content, None)
+        if data is None:
+            logger.warning(f"{name} のメッセージ内容を解析できず、スキップします")
+            continue
+        logger.debug(f"{name} の JSON 内容を正常に解析")
         researcher_data[name] = data
 
     if "researcher_bull_agent" not in researcher_data or "researcher_bear_agent" not in researcher_data:
@@ -119,20 +115,18 @@ def debate_room_agent(state: AgentState):
 
         logger.info("LLM の応答を受信しました")
 
-        if llm_response:
-            try:
-                json_start = llm_response.find('{')
-                json_end = llm_response.rfind('}') + 1
-                if json_start >= 0 and json_end > json_start:
-                    json_str = llm_response[json_start:json_end]
-                    llm_analysis = json.loads(json_str)
-                    llm_score = float(llm_analysis.get("score", 0))
-                    llm_score = max(min(llm_score, 1.0), -1.0)
-                    logger.info(f"LLM の解析スコア: {llm_score}")
-                    logger.debug(f"LLM の分析内容（先頭100文字）: {llm_analysis.get('analysis', 'なし')[:100]}...")
-            except Exception as e:
-                logger.error(f"LLM 応答の解析に失敗: {e}")
+        if llm_response and isinstance(llm_response, str):
+            llm_analysis = safe_parse_json(llm_response, {"analysis": "LLMの応答を解析できませんでした", "score": 0, "reasoning": "解析エラー"})
+            if llm_analysis and isinstance(llm_analysis, dict):
+                llm_score = float(llm_analysis.get("score", 0))
+                llm_score = max(min(llm_score, 1.0), -1.0)
+                logger.info(f"LLM の解析スコア: {llm_score}")
+                logger.debug(f"LLM の分析内容（先頭100文字）: {llm_analysis.get('analysis', 'なし')[:100]}...")
+            else:
                 llm_analysis = {"analysis": "LLMの応答を解析できませんでした", "score": 0, "reasoning": "解析エラー"}
+        elif llm_response:
+            logger.warning(f"LLM 応答が文字列ではありません: {type(llm_response)}")
+            llm_analysis = {"analysis": "LLM応答の形式が不正です", "score": 0, "reasoning": "応答形式エラー"}
     except Exception as e:
         logger.error(f"LLM 呼び出しエラー: {e}")
         llm_analysis = {"analysis": "LLM API 呼び出し失敗", "score": 0, "reasoning": "API エラー"}
