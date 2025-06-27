@@ -5,7 +5,7 @@ description = "An AI-powered hedge fund that uses multiple agents to make US sto
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
 packages = [
-    { include = "src" }
+    { include = "backend" }
 ]
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -27,6 +27,7 @@ google-genai = "^0.6.0"
 uvicorn = "^0.34.0"
 fastapi = "^0.115.12"
 yfinance = "^0.2.18"
+pydantic = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
