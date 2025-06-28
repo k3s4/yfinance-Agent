@@ -2,12 +2,12 @@
 
 import { useChat } from 'ai/react';
 import { useEffect, useRef } from 'react';
-import { BlockKind } from './block';
+import type { BlockKind } from './block';
 import { initialBlockData, useBlock } from '@/hooks/use-block';
 import { useUserMessageId } from '@/hooks/use-user-message-id';
 import { useToolLoading } from '@/hooks/use-tool-loading';
 import { useQueryLoading } from '@/hooks/use-query-loading';
-import { DataStreamDelta, ToolLoadingContent, QueryLoadingContent } from '@/lib/types/data-stream';
+import type { DataStreamDelta, ToolLoadingContent, QueryLoadingContent } from '@/lib/types/data-stream';
 
 export function DataStreamHandler({ id }: { id: string }) {
   const { data: dataStream } = useChat({ id });

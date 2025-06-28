@@ -136,7 +136,7 @@ function PureMultimodalInput({
           document.body.appendChild(span);
           
           const rect = textarea.getBoundingClientRect();
-          const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight);
+          const lineHeight = Number.parseInt(window.getComputedStyle(textarea).lineHeight);
           const lines = textBeforeCursor.split('\n');
           const currentLineNumber = lines.length - 1;
           
@@ -240,7 +240,7 @@ function PureMultimodalInput({
 
   const handleTickerSelect = (ticker: string) => {
     const parts = input.split('@');
-    const newInput = parts.slice(0, -1).join('@') + ticker + ' ';
+    const newInput = `${parts.slice(0, -1).join('@') + ticker} `;
     setInput(newInput);
     setShowTickerSuggestions(false);
     setTickerFilter('');

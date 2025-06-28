@@ -3,16 +3,16 @@
 import type { Attachment, ChatRequestOptions, Message } from 'ai';
 import { useChat } from 'ai/react';
 import { useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
+import { useSWRConfig } from 'swr';
 
 import { ChatHeader } from '@/components/chat-header';
-import { fetcher, track } from '@/lib/utils';
+import { track } from '@/lib/utils';
 import { getFinancialDatasetsApiKey, getLocalOpenAIApiKey } from '@/lib/db/api-keys';
 
 import { Block } from './block';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
-import { VisibilityType } from './visibility-selector';
+import type { VisibilityType } from './visibility-selector';
 import { useBlockSelector } from '@/hooks/use-block';
 import { ApiKeysModal } from '@/components/api-keys-modal';
 

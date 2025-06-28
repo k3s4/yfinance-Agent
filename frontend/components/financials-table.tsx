@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/accordion";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import { Blue, ElectricViolet, Green } from './styles/colors';
+import { Green } from './styles/colors';
 
 interface FinancialData {
   [key: string]: any;
