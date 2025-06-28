@@ -5,7 +5,8 @@
 import json
 import uuid
 import logging
-from datetime import datetime, UTC
+import asyncio
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -127,41 +128,49 @@ async def chat_endpoint(request: ChatRequest):
         
         # マルチエージェントシステムで処理
         async def generate_response():
-            yield f"data: {json.dumps({'type': 'message-start', 'content': {'id': str(uuid.uuid4())}})}\n\n"
+            message_id = str(uuid.uuid4())
+            yield f"data: {json.dumps({'type': 'message-start', 'message': {'id': message_id, 'role': 'assistant'}})}\n\n"
             
             try:
                 # 処理中であることを通知
-                yield f"data: {json.dumps({'type': 'status', 'content': '分析を開始しています...'})}\n\n"
+                start_message = '\n🔍 分析を開始しています...\n\n'
+                yield f"data: {json.dumps({'type': 'text-delta', 'textDelta': start_message})}\n\n"
                 
                 # マルチエージェントシステムを実行
                 result = await process_chat_with_agents(messages, chat_id)
                 
-                # 結果を段階的にストリーミング
-                words = result.split()
-                current_text = ""
+                # 結果を段階的にストリーミング（文字単位ではなく、チャンク単位で）
+                chunk_size = 50  # 文字数単位
+                current_pos = 0
                 
-                for i, word in enumerate(words):
-                    current_text += word + " "
+                while current_pos < len(result):
+                    end_pos = min(current_pos + chunk_size, len(result))
+                    chunk = result[current_pos:end_pos]
                     
-                    # 数語ごとにストリーミング
-                    if i % 3 == 0 or i == len(words) - 1:
-                        yield f"data: {json.dumps({'type': 'text-delta', 'content': word + ' '})}\n\n"
+                    yield f"data: {json.dumps({'type': 'text-delta', 'textDelta': chunk})}\n\n"
+                    current_pos = end_pos
+                    
+                    # 少し遅延を入れて自然なストリーミング感を演出
+                    await asyncio.sleep(0.02)
                 
                 yield f"data: {json.dumps({'type': 'message-stop'})}\n\n"
                 yield "data: [DONE]\n\n"
                 
             except Exception as e:
-                error_msg = f"エラーが発生しました: {str(e)}"
-                yield f"data: {json.dumps({'type': 'error', 'content': error_msg})}\n\n"
+                error_msg = f"\n❌ エラーが発生しました: {str(e)}\n\n詳細についてはサーバーログを確認してください。"
+                yield f"data: {json.dumps({'type': 'text-delta', 'textDelta': error_msg})}\n\n"
+                yield f"data: {json.dumps({'type': 'message-stop'})}\n\n"
                 yield "data: [DONE]\n\n"
         
         return StreamingResponse(
             generate_response(),
-            media_type="text/plain",
+            media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
                 "Connection": "keep-alive",
-                "Content-Type": "text/event-stream",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
             }
         )
         
