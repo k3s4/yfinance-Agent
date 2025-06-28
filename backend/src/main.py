@@ -1,7 +1,6 @@
 import sys
 import argparse
 import uuid  # Import uuid for run IDs
-import threading  # Import threading for background task
 import uvicorn  # Import uvicorn to run FastAPI
 
 from datetime import datetime, timedelta
@@ -137,7 +136,7 @@ workflow.add_edge("market_data_agent", "fundamentals_agent")
 workflow.add_edge("market_data_agent", "sentiment_agent")
 workflow.add_edge("market_data_agent", "valuation_agent")
 
-        # Main analysis path (technical, fundamentals, sentiment, valuation -> researchers -> debate -> risk -> portfolio)
+# Main analysis path (technical, fundamentals, sentiment, valuation -> researchers -> debate -> risk -> portfolio)
 workflow.add_edge("technical_analyst_agent", "researcher_bull_agent")
 workflow.add_edge("fundamentals_agent", "researcher_bull_agent")
 workflow.add_edge("sentiment_agent", "researcher_bull_agent")
@@ -164,6 +163,7 @@ app = workflow.compile()
 
 
 def run_fastapi():
+    """FastAPIサーバーを起動する関数（オプション）"""
     print("--- Starting FastAPI server in background (port 8000) ---")
     # Import here to avoid circular import
     from ..main import app as fastapi_app
@@ -172,12 +172,10 @@ def run_fastapi():
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    fastapi_thread = threading.Thread(target=run_fastapi, daemon=True)
-    fastapi_thread.start()
     parser = argparse.ArgumentParser(
         description='Run the hedge fund trading system')
-    parser.add_argument('--ticker', type=str, required=True,
-                        help='Stock ticker symbol')
+    parser.add_argument('--ticker', type=str, required=False,
+                        help='Stock ticker symbol (required for analysis mode)')
     parser.add_argument('--start-date', type=str,
                         help='Start date (YYYY-MM-DD). Defaults to 1 year before end date')
     parser.add_argument('--end-date', type=str,
@@ -192,7 +190,19 @@ if __name__ == "__main__":
                         default=0, help='Initial stock position (default: 0)')
     parser.add_argument('--summary', action='store_true',
                         help='Show beautiful summary report at the end')
+    parser.add_argument('--server', action='store_true',
+                        help='Start FastAPI server instead of running analysis')
     args = parser.parse_args()
+    
+    # --serverオプションが指定された場合はFastAPIサーバーを起動
+    if args.server:
+        run_fastapi()
+        sys.exit(0)
+    
+    # 通常の分析処理
+    if not args.ticker:
+        parser.error("--ticker is required for analysis mode")
+    
     current_date = datetime.now()
     yesterday = current_date - timedelta(days=1)
     end_date = yesterday if not args.end_date else min(
