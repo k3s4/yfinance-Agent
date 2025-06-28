@@ -1,4 +1,4 @@
-import { type Message } from 'ai';
+import type { Message } from 'ai';
 import {
   deleteChatById,
   getChatById,
@@ -66,7 +66,39 @@ export async function POST(request: Request) {
     });
 
     if (!backendResponse.ok) {
-      throw new Error(`Backend API error: ${backendResponse.status}`);
+      const errorText = await backendResponse.text().catch(() => 'Unknown error');
+      console.error(`Backend API error: ${backendResponse.status} ${backendResponse.statusText}`, errorText);
+      
+      let errorMessage = 'バックエンドでエラーが発生しました。';
+      switch (backendResponse.status) {
+        case 400:
+          errorMessage = 'リクエストが正しくありません。入力内容を確認してください。';
+          break;
+        case 401:
+          errorMessage = '認証が必要です。API設定を確認してください。';
+          break;
+        case 403:
+          errorMessage = 'アクセスが拒否されました。権限を確認してください。';
+          break;
+        case 404:
+          errorMessage = 'エンドポイントが見つかりません。バックエンドが起動しているか確認してください。';
+          break;
+        case 429:
+          errorMessage = 'リクエスト回数が上限を超えました。しばらく待ってから再試行してください。';
+          break;
+        case 500:
+          errorMessage = 'サーバー内部エラーが発生しました。';
+          break;
+        case 502:
+        case 503:
+        case 504:
+          errorMessage = 'サーバーが一時的に利用できません。しばらく待ってから再試行してください。';
+          break;
+        default:
+          errorMessage = `予期しないエラーが発生しました (${backendResponse.status})。`;
+      }
+      
+      throw new Error(errorMessage);
     }
 
     // ストリーミングレスポンスを転送
@@ -75,16 +107,55 @@ export async function POST(request: Request) {
       throw new Error('No response body from backend');
     }
 
+    let assistantContent = '';
+    
     const stream = new ReadableStream({
       start(controller) {
         function pump(): Promise<void> {
           return reader.read().then(({ done, value }) => {
             if (done) {
               // バックエンドからのレスポンス完了後にアシスタントメッセージを保存
-              // Note: 実際の実装では、レスポンスの内容を取得して保存する必要がある
+              if (assistantContent.trim()) {
+                const assistantMessageId = generateUUID();
+                saveMessages({
+                  messages: [
+                    {
+                      id: assistantMessageId,
+                      chatId: id,
+                      role: 'assistant',
+                      content: assistantContent.trim(),
+                      createdAt: new Date(),
+                    },
+                  ],
+                }).catch(error => {
+                  console.error('Failed to save assistant message:', error);
+                });
+              }
               controller.close();
               return;
             }
+            
+            // レスポンス内容を蓄積（text-deltaの場合）
+            if (value) {
+              const chunk = new TextDecoder().decode(value);
+              try {
+                const lines = chunk.split('\n');
+                for (const line of lines) {
+                  if (line.startsWith('data: ') && !line.includes('[DONE]')) {
+                    const data = JSON.parse(line.substring(6));
+                    // 新しいtextDelta形式と従来のcontent形式の両方をサポート
+                    if (data.type === 'text-delta') {
+                      const delta = data.textDelta || data.content || '';
+                      assistantContent += delta;
+                    }
+                  }
+                }
+              } catch (e) {
+                // JSON解析エラーは無視（ストリーミング中の不完全なデータ）
+                console.warn('Failed to parse streaming data:', e);
+              }
+            }
+            
             controller.enqueue(value);
             return pump();
           });
@@ -102,7 +173,33 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Error calling backend API:', error);
-    return new Response('Internal Server Error', { status: 500 });
+    
+    let errorMessage = 'チャット処理中にエラーが発生しました。';
+    let statusCode = 500;
+    
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      errorMessage = 'バックエンドサーバーに接続できません。サーバーが起動しているか確認してください。';
+      statusCode = 502;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+      // エラーメッセージに基づいてステータスコードを調整
+      if (error.message.includes('404') || error.message.includes('エンドポイントが見つかりません')) {
+        statusCode = 404;
+      } else if (error.message.includes('400') || error.message.includes('リクエストが正しくありません')) {
+        statusCode = 400;
+      }
+    }
+    
+    return new Response(JSON.stringify({ 
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
+      path: '/api/chat'
+    }), { 
+      status: statusCode,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 }
 
@@ -128,8 +225,22 @@ export async function DELETE(request: Request) {
     await deleteChatById({ id });
     return new Response('Chat deleted', { status: 200 });
   } catch (error) {
-    return new Response('An error occurred while processing your request', {
+    console.error('Error deleting chat:', error);
+    
+    let errorMessage = 'チャット削除中にエラーが発生しました。';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
+    return new Response(JSON.stringify({ 
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
+      path: '/api/chat'
+    }), {
       status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   }
 }

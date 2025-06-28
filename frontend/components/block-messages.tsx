@@ -1,9 +1,8 @@
 import { PreviewMessage } from './message';
 import { useScrollToBottom } from './use-scroll-to-bottom';
-import { ChatRequestOptions, Message } from 'ai';
+import type { ChatRequestOptions, Message } from 'ai';
 import { memo } from 'react';
-import equal from 'fast-deep-equal';
-import { UIBlock } from './block';
+import type { UIBlock } from './block';
 
 interface BlockMessagesProps {
   chatId: string;

@@ -1,8 +1,7 @@
-import { ChatRequestOptions, Message } from 'ai';
+import type { ChatRequestOptions, Message } from 'ai';
 import { LoadingMessage, PreviewMessage, ThinkingMessage } from './message';
 import { useScrollToBottom } from './use-scroll-to-bottom';
 import { memo } from 'react';
-import equal from 'fast-deep-equal';
 import { useQueryLoadingSelector } from '@/hooks/use-query-loading';
 
 interface MessagesProps {

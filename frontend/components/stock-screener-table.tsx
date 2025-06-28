@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/accordion";
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Blue, Green } from './styles/colors';
+import { Green } from './styles/colors';
 
 interface StockScreenerResult {
   ticker: string;
