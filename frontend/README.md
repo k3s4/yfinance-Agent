@@ -1,10 +1,6 @@
 # AI Financial Agent 🤖
 This is a proof of conncept AI financial agent.  The goal of this project is to explore the use of AI for investment research.  This project is for **educational** purposes only and is not intended for real trading or investment.
 
-👋 **Demo**: You can use a live demo of this project [here](https://chat.financialdatasets.ai/).
-
-<img width="1709" alt="Screenshot 2025-01-06 at 5 53 59 PM" src="https://github.com/user-attachments/assets/7ef1729b-f2e1-477c-99e2-1184c1bfa1cd" />
-
 ## Disclaimer
 
 This project is for **educational and research purposes only**.
